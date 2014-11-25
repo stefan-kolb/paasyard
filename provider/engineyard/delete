@@ -1,0 +1,8 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+echo "ERROR: NOT SUPPORTED YET"
+

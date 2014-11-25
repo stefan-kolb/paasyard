@@ -1,0 +1,22 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Removing application..."
+rhc app-delete $APPNAME -l $OS_USERNAME -p $OS_PASSWORD --confirm
+
+echo "-----> Cleaning application space..."
+# ssh key
+rhc sshkey remove dploy -l $OS_USERNAME -p $OS_PASSWORD || {
+  rhc sshkey remove default -l $OS_USERNAME -p $OS_PASSWORD
+}
+# auth token
+rhc logout
+
+echo "-----> Checking availability..."
+is_down "https://$APPNAME-$OS_NAMESPACE.rhcloud.com"
+

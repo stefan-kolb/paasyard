@@ -1,0 +1,27 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Updating application..."
+# --deploy immediately deploys after push
+expect <<'END'
+  set timeout 1000
+  spawn cctrlapp $env(APPNAME)/default push --deploy
+  expect {
+    -re "Email.*" { send "$env(CC_USERNAME)\r"; exp_continue } 
+    -re ".*Password.*" { send "$env(CC_PASSWORD)\r"; exp_continue }
+    -re ".*continue connecting (yes/no)?" { send "yes\r"}
+  }
+  expect eof
+END
+
+# deletes token
+cctrluser logout
+
+echo "-----> Checking availability..."
+is_up "https://$APPNAME.cloudcontrolled.com"
+

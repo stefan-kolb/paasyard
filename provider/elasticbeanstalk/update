@@ -1,0 +1,29 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Updating application..."
+# rerun eb init for config file
+. eb_init.sh
+
+# TODO eb push vs git aws.push
+eb push
+
+# wait for instance to be ready
+printf "Waiting for instance to be ready again"
+
+until [ "$(eb status | sed -En "s/Status.*?: (.*)$/\1/p")" == "Ready" ]; do
+  printf "."
+  sleep 1
+done
+
+printf "\n"
+
+echo "-----> Checking availability..."
+local url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
+is_up $url 1800
+

@@ -1,0 +1,65 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Initializing application space..."
+# 1-3. api, user, pass
+# 4. login token for this session
+# 5. upload ssh key
+# 6. ssh key name or default if none present
+rhc setup <<EOF
+
+$OS_USERNAME
+$OS_PASSWORD
+yes
+yes
+dploy
+EOF
+
+# TODO namespace?! must be configured in order to create apps! rhc domain
+# last = host authenticity
+# Host key verification failed.
+# fatal: The remote end hung up unexpectedly
+# -s for scalable
+expect <<'END'
+  set timeout 1000
+  spawn rhc create-app $env(APPNAME) ruby-2.0 --no-git
+  expect eof
+END
+
+##cd $_DIR_/$APPNAME
+if [[ !${#evar[@]} -eq 0 ]]; then
+  rhc set-env BUNDLE_WITHOUT="development:test" ${evar[@]} --app $APPNAME
+fi
+
+echo "-----> Deploying application..."
+# https://help.openshift.com/hc/en-us/articles/202398470-Sync-new-git-repo-with-your-own-existing-git-repo
+# TODO fetc absolute URL?!
+# rm -rf *
+# git add --all
+# git commit -am "Cleaning up everything"
+##git fetch $_DIR_
+# specifiy commit message
+##git merge -s recursive -X theirs FETCH_HEAD
+##git push origin master
+##cd $_DIR_
+git=$(rhc show-app $APPNAME | sed -En "s/Git URL:(.*)$/\1/p")
+git remote add openshift $git
+expect <<'END'
+  set timeout -1
+  spawn git push -f openshift master
+  expect {
+    -re ".*continue connecting (yes/no)?" { send "yes\r" }
+  }
+  expect eof
+END
+
+rhc logout
+
+echo "-----> Checking availability..."
+is_up "https://$APPNAME-$OS_NAMESPACE.rhcloud.com"
+

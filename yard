@@ -1,0 +1,155 @@
+#!/bin/bash
+set -eo pipefail
+
+readonly YARD_VERSION="0.2"
+readonly NAME="stfnklb/yard"
+readonly TAG="${PWD##*/}"
+
+# TODO list and check if vendor is supported
+# TODO supply an option to deploy to all at once
+readonly vendors=(heroku openshift cloudcontrol elasticbeanstalk engineyard pivotal bluemix)
+
+clean() {
+  # terminated containers
+  docker rm $(docker ps -aq -f "status=exited") > /dev/null
+  # untagged images
+  docker rmi $(docker images -f "dangling=true" -q) > /dev/null
+}
+
+receive() {
+  # Place the app inside the container
+  ID=$(cat | docker run -i -a stdin "$NAME":base /bin/bash -c "mkdir -p /yard/app && tar -xC /yard/app")
+  test $(docker wait $ID) -eq 0
+  docker commit "$ID" "$NAME":"$TAG" > /dev/null
+  clean
+}
+
+contains() { 
+  local array="$1[@]"
+  local seeking=$2
+  local in=1
+  for element in "${!array}"; do
+      if [[ $element == $seeking ]]; then
+          in=0
+          break
+      fi
+  done
+  return $in
+}
+
+usage() {
+  echo "Usage: yard COMMAND VENDOR [OPTIONS]"
+  echo ""
+  echo "COMMANDS:"
+  echo "  create    # deploy application to vendor"
+  echo "  push      # update to a new version"
+  echo "  delete    # delete application"
+  echo "  set-env   # set an env variable"
+  echo ""
+  echo "OPTIONS:"
+  echo "  -a APPNAME # (optional) desired name of the deployment"
+  echo "  -r REMOTE  # (optional) app source remote git repository"
+}
+
+main() {
+  local cmd="$1"; shift
+  local vendor="$1"; shift
+  local appname="${PWD##*/}" remote env_var
+
+  # parameter checks
+  if [[ -z $cmd ]]; then
+    echo "This script requires a command!" >&2
+    usage
+    exit 1
+  fi
+
+  if [[ -z $vendor ]]; then
+    echo "This script requires a vendor!" >&2
+    usage
+    exit 1
+  fi
+  
+  # optional third operand
+  if [[ $cmd == "set-env" ]]; then
+    env_var="$1"; shift
+  fi
+
+  # options
+  local OPTIND opt a r
+  while getopts ":a:r:vh" opt; do
+    case $opt in  
+      a)
+        appname="$OPTARG"
+        ;;
+      r)
+        remote="$OPTARG"
+        ;;
+      v)
+        echo "YARD_VERSION="$YARD_VERSION""
+        exit 0
+        ;;
+      h)
+        usage
+        exit 0
+        ;;
+      \?)
+        echo "Invalid option: -"$OPTARG"" >&2
+        usage
+        exit 1
+        ;;
+      :)
+        echo "Option -"$OPTARG" requires an argument." >&2
+        usage
+        exit 1
+        ;;
+    esac
+  done
+
+  # commands
+  case $cmd in
+    push)
+      if [[ -n $remote ]]; then
+        # remote repo
+        local temp=$(mktemp -d)
+        git clone "$remote" "$temp"
+        tar cC "$temp" . | receive
+        rm -rf "$temp"
+      else
+        # app folder
+        tar cC "${PWD}" . | receive
+      fi
+
+      echo "-----> Pushing app to ${vendor^}..." >&1
+      docker run --rm "$NAME":"$TAG" /yard/deploy update "$vendor" "$appname"
+      ;;
+    create)
+      if [[ -n $remote ]]; then
+        # remote repo
+        local temp=$(mktemp -d)
+        git clone "$remote" "$temp"
+        tar cC "$temp" . | receive
+        rm -rf "$temp"
+      else
+        # app folder
+        tar cC "${PWD}" . | receive
+      fi
+
+      echo "-----> Creating app on ${vendor^}..." >&1
+      docker run --rm "$NAME":"$TAG" /yard/deploy deploy "$vendor" "$appname"
+      ;;
+    delete)
+      echo "-----> Deleting app on ${vendor^}..." >&1
+      docker run --rm "$NAME":"$TAG" /yard/deploy delete "$vendor" "$appname"
+      ;;
+    set-env)
+      echo "-----> Configuring app on ${vendor^}..." >&1
+      echo "Sorry, this is not implemented yet. Please use the .env file for now!"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+}
+
+main "$@"
+

@@ -1,0 +1,5 @@
+---
+# This is all you need for a typical rails application.
+defaults:
+  migrate: false
+  precompile_assets: true

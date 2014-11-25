@@ -1,0 +1,24 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Updating application..."
+# add remote if missing
+heroku git:remote -a $APPNAME
+
+expect <<'END'
+  set timeout 1000
+  spawn git push heroku master
+  expect {
+    -re ".*continue connecting (yes/no)?.*" { send "yes\r"}
+  }
+  expect eof
+END
+
+echo "-----> Checking availability..."
+is_up "https://$APPNAME.herokuapp.com"
+

@@ -1,0 +1,40 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Initializing application space..."
+# export HEROKU_API_KEY=$HEROKU_API_KEY
+# Key will be uploaded automatically
+heroku keys:add
+#expect <<'END'
+#  spawn heroku login
+#  expect {
+#    -re "Email.*" { send "$env(HEROKU_USERNAME)\r"; exp_continue } 
+#    -re "Password \(typing will be hidden\):" { send "$env(HEROKU_PASSWORD)\r" }
+#  }
+#END
+
+# create app space
+heroku create $APPNAME
+# set env vars
+if [[ !${#evar[@]} -eq 0 ]]; then
+  heroku config:set ${evar[@]}
+fi
+
+echo "-----> Deploying application..."
+expect <<'END'
+  set timeout 1000
+  spawn git push heroku master
+  expect {
+    -re ".*continue connecting (yes/no)?" { send "yes\r" }
+  }
+  expect eof
+END
+
+echo "-----> Checking availability..."
+is_up "https://$APPNAME.herokuapp.com"
+

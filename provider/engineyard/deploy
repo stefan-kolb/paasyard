@@ -1,0 +1,45 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Initializing application space..."
+# setup env before and upload ssh keys, assign to environment and apply changes
+# Manual creation necessary
+# https://ui.engineyard.com vs OLD https://cloud.engineyard.com
+# TODO instance provisioning API
+# https://cloud.engineyard.com/accounts/34251/features
+
+# TODO expect nutzen? stty: standard input: Inappropriate ioctl for device
+ey login <<EOF
+$EY_USERNAME
+$EY_PASSWORD
+EOF
+
+echo "-----> Deploying application..."
+# TODO account problem multiple environments possible, with new ui probably
+# TODO already deployed, restart would be enough
+# TODO maybe even no restart required as the recipe may trigger this
+#ey deploy --app=$APPNAME --environment=$EY_ENVIRONMENT --ref 1d44803847674fc7fb060269d633fce8649c0e62 --no-migrate
+#ey web restart --app=blinkist --environment=$APPNAME
+ruby deploy.rb 'HEAD'
+
+# ENV variables
+# https://github.com/engineyard/ey-cloud-recipes.git
+# copy env config
+cp .env recipes/cookbooks/env_vars/attributes/.env > /dev/null || true
+
+cd $_DIR_/recipes
+ey recipes upload -e $EY_ENVIRONMENT
+ey recipes apply -e $EY_ENVIRONMENT
+cd $_DIR_
+
+# TODO bug need manual puma restart
+
+echo "-----> Checking availability..."
+url=$(ey servers -s -e $EY_ENVIRONMENT | sed -En "s/\s.*$//p")
+is_up "http://$url"
+

@@ -1,0 +1,39 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Removing application..."
+expect <<'END'
+  set timeout 1000
+  spawn cctrlapp $env(APPNAME)/default undeploy --force
+  expect {
+    -re "Email.*" { send "$env(CC_USERNAME)\r"; exp_continue } 
+    -re ".*Password.*" { send "$env(CC_PASSWORD)\r" }
+  }
+  expect eof
+END
+
+cctrlapp $APPNAME delete --force
+
+echo "-----> Cleaning application space..."
+# ssh keys
+keys="$(cctrluser key)"
+readarray -t keys <<<"$keys"
+# remove 1st element 'Keys'
+keys=("${keys[@]:1}")
+
+for k in "${keys[@]}"; do
+  echo "Removing key $k..."
+  cctrluser key.remove $k -f
+done
+
+# deletes token
+cctrluser logout
+
+echo "-----> Checking availability..."
+is_down "https://$APPNAME.cloudcontrolled.com"
+

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Removing application..."
+# rerun eb init for config file
+. eb_init.sh
+
+eb delete -a $APPNAME -f
+
+echo "-----> Checking availability..."
+local url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
+is_down $url
+

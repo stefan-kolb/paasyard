@@ -1,0 +1,33 @@
+FROM ubuntu:12.04
+MAINTAINER Stefan Kolb <stefan.kolb@uni-bamberg.de>
+
+RUN apt-get update &&\
+    apt-get -y upgrade &&\
+    apt-get clean
+RUN apt-get update &&\
+    apt-get -y install expect curl wget unzip git sudo
+
+## Git config
+RUN git config --global user.name "dploy" &&\
+    git config --global user.email noreply@example.com
+
+## Ruby
+RUN apt-get update &&\
+    apt-get install -y python-software-properties software-properties-common &&\
+    apt-add-repository ppa:brightbox/ruby-ng &&\
+    apt-get update &&\
+    apt-get install -y ruby rubygems ruby-switch &&\
+    apt-get install -y ruby2.0 ruby2.0-dev &&\
+    ruby-switch --set ruby2.0
+# do not install gem docs
+RUN echo 'gem: --no-document' >> ~/.gemrc
+
+## Python
+RUN apt-get update &&\
+    apt-get install -y python2.7 python-pip
+
+## Files
+ADD . /yard
+
+## CLI bootstrapping
+RUN /yard/docker/init.sh

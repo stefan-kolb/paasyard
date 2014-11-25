@@ -1,0 +1,20 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Updating application..."
+ey login <<EOF
+$EY_USERNAME
+$EY_PASSWORD
+EOF
+
+ruby deploy.rb 'HEAD'
+
+echo "-----> Checking availability..."
+url=$(ey servers -s -e $EY_ENVIRONMENT | sed -En "s/\s.*$//p")
+is_up "http://$url"
+

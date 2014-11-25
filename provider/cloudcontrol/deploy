@@ -1,0 +1,52 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Initializing application space..."
+# ssh keys
+expect <<'END'
+  spawn cctrluser key.add
+  expect {
+    -re "Email.*" { send "$env(CC_USERNAME)\r"; exp_continue } 
+    -re ".*Password.*" { send "$env(CC_PASSWORD)\r" }
+  }
+  expect eof
+END
+# issue #74
+sleep 10
+
+expect <<'END'
+  spawn cctrlapp $env(APPNAME) create ruby
+  expect {
+    -re ".*Git configuration found! Using "Git" as repository type..*" { exit 0 }    
+    -re ".*name: App with this Name already exists..*" { exit 1 }
+  }
+END
+
+if [[ !${#evar[@]} -eq 0 ]]; then
+  cctrlapp $APPNAME/default config.add ${evar[@]}
+fi
+
+echo "-----> Deploying application..."
+expect <<'END'
+  set timeout 1000
+  spawn cctrlapp $env(APPNAME)/default push
+  expect {
+    -re ".*continue connecting (yes/no)?" { send "yes\r"}
+  }
+  expect eof
+END
+
+# --memory 512MB
+cctrlapp $APPNAME/default deploy
+
+# deletes token
+cctrluser logout
+
+echo "-----> Checking availability..."
+is_up "https://$APPNAME.cloudcontrolled.com"
+

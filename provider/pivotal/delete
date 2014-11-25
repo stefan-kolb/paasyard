@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Removing application..."
+cf login -u $PWS_USERNAME -p $PWS_PASSWORD -s $PWS_SPACE -a api.run.pivotal.io
+cf delete $APPNAME -f -r
+
+echo "-----> Cleaning application space..."
+cf logout
+
+echo "-----> Checking availability..."
+is_down "https://$APPNAME.cfapps.io"
+

@@ -1,0 +1,18 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Removing application..."
+heroku apps:destroy --app $APPNAME --confirm $APPNAME
+
+echo "-----> Cleaning application space..."
+# ssh keys
+heroku keys:remove dploy
+
+echo "-----> Checking availability..."
+is_down "https://$APPNAME.herokuapp.com"
+

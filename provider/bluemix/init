@@ -1,0 +1,9 @@
+#!/bin/bash
+set -eo pipefail
+
+echo "-----> Installing CLI..."
+wget "https://cli.run.pivotal.io/stable?release=linux64-binary&version=6.7.0" -nv -O cf-cli.tgz
+mkdir -p /opt/cf
+tar -xf cf-cli.tgz -C /opt/cf
+rm cf-cli.tgz
+ln -sf /opt/cf/cf /usr/bin/cf

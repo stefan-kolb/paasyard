@@ -1,0 +1,6 @@
+#!/bin/bash
+set -eo pipefail
+
+echo "-----> Installing CLI..."
+gem install engineyard
+gem install engineyard-cloud-client
