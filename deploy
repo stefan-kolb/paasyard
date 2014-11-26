@@ -22,6 +22,7 @@ pre_deploy() {
   # copy app
   cp -r app/. current
   # compatibility: git
+  cd current
   if [ ! -d .git ]; then
     git init
     git add --all
@@ -29,8 +30,7 @@ pre_deploy() {
   fi
   # copy artifacts
   # deployment artifacts (optional)
-  cp -r provider/${1,,}/files/. current 2> /dev/null || true
-  cd current
+  cp -r ../provider/${1,,}/files/. . 2> /dev/null || true
   # compatibility: missing non master support
   if [[ "$(git symbolic-ref --short -q HEAD)" != "master" ]]; then
     echo "Deployment from non-master branch is not supported!"
