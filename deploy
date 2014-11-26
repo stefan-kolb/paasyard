@@ -19,14 +19,19 @@ pre_deploy() {
   # defensiv clean up
   rm -rf current
   mkdir -p current
-  # TODO git should be copied 1-1 atm file modes or anything are changed and recomitted later?
+  # copy app
   cp -r app/. current
-  # TODO check if this is a git repo already, else make it one!
+  # compatibility: git
+  if [ ! -d .git ]; then
+    git init
+    git add --all
+    git commit -m "Initialize Git"
+  fi
   # copy artifacts
   # deployment artifacts (optional)
   cp -r provider/${1,,}/files/. current 2> /dev/null || true
   cd current
-  # TODO deployment from non master branch fails on HK, CC
+  # compatibility: missing non master support
   if [[ "$(git symbolic-ref --short -q HEAD)" != "master" ]]; then
     echo "Deployment from non-master branch is not supported!"
     echo "Checkout master branch first."
