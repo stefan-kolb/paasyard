@@ -26,8 +26,14 @@ pre_deploy() {
   # deployment artifacts (optional)
   cp -r provider/${1,,}/files/. current 2> /dev/null || true
   cd current
+  # TODO deployment from non master branch fails on HK, CC
+  if [[ "$(git symbolic-ref --short -q HEAD)" != "master" ]]; then
+    echo "Deployment from non-master branch is not supported!"
+    echo "Checkout master branch first."
+    exit 1
+  fi
   git add --all
-  git commit -m "Deployment artifacts"
+  git commit -m "Deployment artifacts" || true
   cd ..
   # TODO all those artifacts are not good if deployment is not Git based
   # would also be possible to run a cd app inside the scripts from a parent folder?!
