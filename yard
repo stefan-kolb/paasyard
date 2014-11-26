@@ -11,9 +11,9 @@ readonly vendors=(heroku openshift cloudcontrol elasticbeanstalk engineyard pivo
 
 clean() {
   # terminated containers
-  docker rm $(docker ps -aq -f "status=exited") > /dev/null
+  docker rm $(docker ps -aq -f "status=exited") &> /dev/null || true
   # untagged images
-  docker rmi $(docker images -f "dangling=true" -q) > /dev/null
+  docker rmi $(docker images -f "dangling=true" -q) &> /dev/null || true
 }
 
 receive() {
