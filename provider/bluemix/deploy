@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eo pipefail
+#set -eo pipefail
 
 _DIR_="$(dirname "$0")"
 cd $_DIR_
@@ -7,7 +7,7 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Initializing application space..."
-cf login -u $BM_USERNAME -p $BM_PASSWORD -s $BM_SPACE -a https://api.ng.bluemix.net
+cf login -u "$BM_USERNAME" -p "$BM_PASSWORD" -s "$BM_SPACE" -a "https://api.ng.bluemix.net"
 
 echo "-----> Deploying application..."
 cf push $APPNAME -m 512M --no-start

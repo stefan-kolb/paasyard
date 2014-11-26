@@ -7,7 +7,7 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Removing application..."
-cf login -u $PWS_USERNAME -p $PWS_PASSWORD -s $PWS_SPACE -a api.run.pivotal.io
+cf login -u "$PWS_USERNAME" -p "$PWS_PASSWORD" -s "$PWS_SPACE" -a "https://api.run.pivotal.io"
 cf delete $APPNAME -f -r
 
 echo "-----> Cleaning application space..."

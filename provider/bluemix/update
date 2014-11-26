@@ -7,7 +7,7 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Updating application..."
-cf login -u $BM_USERNAME -p $BM_PASSWORD -s $BM_SPACE -a https://api.ng.bluemix.net
+cf login -u "$BM_USERNAME" -p "$BM_PASSWORD" -s "$BM_SPACE" -a "https://api.ng.bluemix.net"
 cf push $APPNAME
 cf logout
 
