@@ -5,15 +5,17 @@ RUN apt-get update &&\
     apt-get -y upgrade &&\
     apt-get clean
 RUN apt-get update &&\
-    apt-get -y install expect curl wget unzip git sudo
-
-## Git config
+    apt-get -y install expect curl wget unzip sudo python-software-properties
+## Git (recent version)
+RUN add-apt-repository ppa:git-core/ppa &&\
+    apt-get update &&\
+    apt-get -y install git
 RUN git config --global user.name "dploy" &&\
     git config --global user.email noreply@example.com
 
 ## Ruby
 RUN apt-get update &&\
-    apt-get install -y python-software-properties software-properties-common &&\
+    apt-get install -y software-properties-common &&\
     apt-add-repository ppa:brightbox/ruby-ng &&\
     apt-get update &&\
     apt-get install -y ruby rubygems ruby-switch &&\
