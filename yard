@@ -3,7 +3,7 @@ set -eo pipefail
 
 readonly YARD_VERSION="0.2"
 readonly NAME="stfnklb/yard"
-readonly TAG="${PWD##*/}"
+TAG="${PWD##*/}"
 
 # TODO list and check if vendor is supported
 # TODO supply an option to deploy to all at once
@@ -22,6 +22,16 @@ receive() {
   test $(docker wait $ID) -eq 0
   docker commit "$ID" "$NAME":"$TAG" > /dev/null
   clean
+}
+
+# remote repo
+clone() {
+  local temp=$(mktemp -d)
+  git clone "$remote" "$temp"
+  # TAG name
+  TAG=$(basename "$remote" ".git")
+  tar cC "$temp" . | receive
+  rm -rf "$temp"
 }
 
 contains() {
@@ -116,11 +126,7 @@ main() {
   case $cmd in
     push)
       if [[ -n $remote ]]; then
-        # remote repo
-        local temp=$(mktemp -d)
-        git clone "$remote" "$temp"
-        tar cC "$temp" . | receive
-        rm -rf "$temp"
+        clone
       else
         # app folder
         tar cC "${PWD}" . | receive
@@ -131,11 +137,7 @@ main() {
       ;;
     create)
       if [[ -n $remote ]]; then
-        # remote repo
-        local temp=$(mktemp -d)
-        git clone "$remote" "$temp"
-        tar cC "$temp" . | receive
-        rm -rf "$temp"
+        clone
       else
         # app folder
         tar cC "${PWD}" . | receive
