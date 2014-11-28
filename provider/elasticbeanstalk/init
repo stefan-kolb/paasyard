@@ -3,7 +3,7 @@ set -eo pipefail
 
 echo "-----> Installing CLI..."
 # CLI dependencies
-pip install boto
+pip install --use-mirrors boto
 # see http://aws.amazon.com/code/6752709412171743
 wget https://s3.amazonaws.com/elasticbeanstalk/cli/AWS-ElasticBeanstalk-CLI-2.6.4.zip -nv -O aws-cli.zip
 unzip aws-cli.zip -d /opt

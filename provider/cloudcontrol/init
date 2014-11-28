@@ -2,4 +2,4 @@
 set -eo pipefail
 
 echo "-----> Installing CLI..."
-pip install cctrl
+pip install --use-mirrors cctrl
