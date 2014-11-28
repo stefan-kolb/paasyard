@@ -13,7 +13,7 @@ clean() {
   # terminated containers
   docker rm $(docker ps -aq -f "status=exited") &> /dev/null || true
   # untagged images
-  docker rmi $(docker images -f "dangling=true" -q) &> /dev/null || true
+  docker rmi $(docker images -af "dangling=true" -q) &> /dev/null || true
 }
 
 receive() {
@@ -24,17 +24,10 @@ receive() {
   clean
 }
 
-contains() { 
-  local array="$1[@]"
-  local seeking=$2
-  local in=1
-  for element in "${!array}"; do
-      if [[ $element == $seeking ]]; then
-          in=0
-          break
-      fi
-  done
-  return $in
+contains() {
+  local e
+  for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+  return 1
 }
 
 usage() {
@@ -45,6 +38,7 @@ usage() {
   echo "  push      # update to a new version"
   echo "  delete    # delete application"
   echo "  set-env   # set an env variable"
+  echo "  clean     # clean up docker images"
   echo ""
   echo "OPTIONS:"
   echo "  -a APPNAME # (optional) desired name of the deployment"
@@ -52,9 +46,8 @@ usage() {
 }
 
 main() {
-  local cmd="$1"; shift
-  local vendor="$1"; shift
-  local appname="${PWD##*/}" remote env_var
+  declare cmd="$1" vendor="$2"
+  declare appname="${PWD##*/}" remote env_var
 
   # parameter checks
   if [[ -z $cmd ]]; then
@@ -62,15 +55,29 @@ main() {
     usage
     exit 1
   fi
+  
+  # clean up app images
+  if [[ "$cmd" == "clean" ]]; then
+    echo "Removing app images..."
+    docker images | grep -P 'stfnklb/yard\s*?(?!.*base)' | awk '{print $3}' | xargs docker rmi &> /dev/null || true
+    exit 0
+  fi
 
   if [[ -z $vendor ]]; then
     echo "This script requires a vendor!" >&2
     usage
     exit 1
+  elif ! contains "$vendor" "${vendors[@]}"; then
+    echo "Vendor ${vendor^} is not supported!" >&2
+    echo "${vendors[@]}" >&2
+    exit 1
   fi
   
+  # shift arguments
+  shift 2
+
   # optional third operand
-  if [[ $cmd == "set-env" ]]; then
+  if [[ "$cmd" == "set-env" ]]; then
     env_var="$1"; shift
   fi
 
