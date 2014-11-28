@@ -148,6 +148,9 @@ main() {
       ;;
     delete)
       echo "-----> Deleting app on ${vendor^}..." >&1
+      if [[ -n $remote ]]; then
+        TAG=$(basename "$remote" ".git")
+      fi
       docker run --rm "$NAME":"$TAG" /yard/deploy delete "$vendor" "$appname"
       ;;
     set-env)
