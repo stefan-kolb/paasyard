@@ -1,6 +1,7 @@
 # PaaSyard
 Docker powered (mini) deployment system for PaaS.
 
+<img align="" src="logo.png" height="25%" width="25%">
 ## Requirements
 Any system with a running Docker daemon will do!
 
