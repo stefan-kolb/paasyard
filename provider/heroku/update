@@ -9,15 +9,8 @@ cd $_DIR_
 echo "-----> Updating application..."
 # add remote if missing
 heroku git:remote -a $APPNAME
-
-expect <<'END'
-  set timeout 1000
-  spawn git push heroku master
-  expect {
-    -re ".*continue connecting (yes/no)?.*" { send "yes\r"}
-  }
-  expect eof
-END
+# update files
+spawn git push heroku master
 
 echo "-----> Checking availability..."
 is_up "https://$APPNAME.herokuapp.com"
