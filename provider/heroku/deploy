@@ -7,21 +7,14 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Initializing application space..."
-# heroku login has issues inside script, ssh keys are obsolete if this works
-#expect <<END
-#  spawn heroku auth:login
-#  expect {
-#    -re "Email.*" { send "$HEROKU_USERNAME\r"; exp_continue } 
-#    -re "Password \(typing will be hidden\):" { send "$HEROKU_PASSWORD\r" }
-#  }
-#END
-export HEROKU_API_KEY=$HEROKU_API_KEY
+# authentication
+heroku auth:login <<END
+$HEROKU_USERNAME
+$HEROKU_PASSWORD
+END
 
-# ssh key upload
-heroku keys:add
-
-# create app space, no ssh keys needed when using http git
-heroku create $APPNAME --ssh-git
+# create app space
+heroku create $APPNAME
 
 # set env vars
 if [[ !${#evar[@]} -eq 0 ]]; then
