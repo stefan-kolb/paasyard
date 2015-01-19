@@ -22,14 +22,7 @@ if [[ !${#evar[@]} -eq 0 ]]; then
 fi
 
 echo "-----> Deploying application..."
-expect <<'END'
-  set timeout 1000
-  spawn git push heroku master
-  expect {
-    -re ".*continue connecting (yes/no)?" { send "yes\r" }
-  }
-  expect eof
-END
+git push heroku master
 
 echo "-----> Checking availability..."
 is_up "https://$APPNAME.herokuapp.com"
