@@ -17,7 +17,7 @@ END
 heroku git:remote -a $APPNAME
 
 # update files
-spawn git push heroku master
+git push heroku master
 
 echo "-----> Checking availability..."
 is_up "https://$APPNAME.herokuapp.com"
