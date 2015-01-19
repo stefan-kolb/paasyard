@@ -8,7 +8,7 @@ cd $_DIR_
 
 echo "-----> Updating application..."
 # add remote if missing
-heroku git:remote -a $APPNAME
+heroku git:remote -a $APPNAME --ssh-git
 
 expect <<'END'
   set timeout 1000
