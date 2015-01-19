@@ -7,6 +7,13 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Removing application..."
+# authentication
+heroku auth:login <<END
+$HEROKU_USERNAME
+$HEROKU_PASSWORD
+END
+
+# delete app
 heroku apps:destroy --app $APPNAME --confirm $APPNAME
 
 echo "-----> Cleaning application space..."
