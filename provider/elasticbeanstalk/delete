@@ -15,4 +15,3 @@ eb delete -a $APPNAME -f
 echo "-----> Checking availability..."
 url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
 is_down $url
-
