@@ -20,33 +20,18 @@ yes
 dploy
 EOF
 
-# TODO namespace?! must be configured in order to create apps! rhc domain
-# last = host authenticity
-# Host key verification failed.
-# fatal: The remote end hung up unexpectedly
-# -s for scalable
+# -s for scalable, --gear-size small.highcpu
 expect <<'END'
   set timeout 1000
   spawn rhc create-app $env(APPNAME) ruby-2.0 --no-git
   expect eof
 END
 
-##cd $_DIR_/$APPNAME
 if [[ !${#evar[@]} -eq 0 ]]; then
   rhc set-env BUNDLE_WITHOUT="development:test" ${evar[@]} --app $APPNAME
 fi
 
 echo "-----> Deploying application..."
-# https://help.openshift.com/hc/en-us/articles/202398470-Sync-new-git-repo-with-your-own-existing-git-repo
-# TODO fetc absolute URL?!
-# rm -rf *
-# git add --all
-# git commit -am "Cleaning up everything"
-##git fetch $_DIR_
-# specifiy commit message
-##git merge -s recursive -X theirs FETCH_HEAD
-##git push origin master
-##cd $_DIR_
 git=$(rhc show-app $APPNAME | sed -En "s/Git URL:(.*)$/\1/p")
 git remote add openshift $git
 expect <<'END'
@@ -58,8 +43,9 @@ expect <<'END'
   expect eof
 END
 
+# auth token
 rhc logout
 
 echo "-----> Checking availability..."
-is_up "https://$APPNAME-$OS_NAMESPACE.rhcloud.com"
+is_up "https://$APPNAME-$OS_DOMAIN.rhcloud.com"
 

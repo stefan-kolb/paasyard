@@ -18,5 +18,5 @@ rhc sshkey remove dploy -l $OS_USERNAME -p $OS_PASSWORD || {
 rhc logout
 
 echo "-----> Checking availability..."
-is_down "https://$APPNAME-$OS_NAMESPACE.rhcloud.com"
+is_down "https://$APPNAME-$OS_DOMAIN.rhcloud.com"
 

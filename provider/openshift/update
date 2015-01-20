@@ -17,7 +17,9 @@ expect <<'END'
   }
   expect eof
 END
+# auth token
+rhc logout
 
 echo "-----> Checking availability..."
-is_up "https://$APPNAME-$OS_NAMESPACE.rhcloud.com"
+is_up "https://$APPNAME-$OS_DOMAIN.rhcloud.com"
 
