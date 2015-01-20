@@ -43,7 +43,7 @@ pre_deploy() {
   # TODO all those artifacts are not good if deployment is not Git based
   # would also be possible to run a cd app inside the scripts from a parent folder?!
   # deployment scripts
-  cp provider/${1,,}/* current
+  cp provider/${1,,}/* current 2> /dev/null || true
   # helper scripts
   cp -r helpers/. current
 }
