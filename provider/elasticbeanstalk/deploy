@@ -10,13 +10,12 @@ echo "-----> Initializing application space..."
 . eb_init.sh
 
 echo "-----> Deploying application..."
-# FIXME --polling-timeout 1800 is bugged
-# will timeout too early like this
-# See https://forums.aws.amazon.com/message.jspa?messageID=562409#562409
 eb start --verbose <<EOF
 y
 EOF
 
+# WORKAROUND --polling-timeout 1800 is bugged
+# see https://forums.aws.amazon.com/message.jspa?messageID=562409#562409
 # wait for instance to be ready
 printf "Waiting for instance to be ready again"
 

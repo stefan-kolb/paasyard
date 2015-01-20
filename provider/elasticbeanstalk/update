@@ -10,7 +10,7 @@ echo "-----> Updating application..."
 # rerun eb init for config file
 . eb_init.sh
 
-# TODO eb push vs git aws.push
+# deploy
 eb push
 
 # wait for instance to be ready
