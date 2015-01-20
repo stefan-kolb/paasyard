@@ -17,11 +17,6 @@ do
   cf set-env $APPNAME $(echo $e | sed 's/=/ /g')
 done
 
-# options:
-# `cf push --no-start`, then `cf set-env` and then `cf start`.
-# `cf restart` should only restart the server 
-# `cf restage` redeploys completely
-# application manifest
 cf start $APPNAME
 
 cf logout
