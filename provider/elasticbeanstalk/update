@@ -24,6 +24,6 @@ done
 printf "\n"
 
 echo "-----> Checking availability..."
-local url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
-is_up $url 1800
+url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
+is_up $url
 

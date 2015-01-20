@@ -13,6 +13,6 @@ echo "-----> Removing application..."
 eb delete -a $APPNAME -f
 
 echo "-----> Checking availability..."
-local url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
+url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
 is_down $url
 
