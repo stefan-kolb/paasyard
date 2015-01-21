@@ -12,6 +12,7 @@ $EY_USERNAME
 $EY_PASSWORD
 EOF
 
+#ey deploy --app=$APPNAME --environment=$EY_ENVIRONMENT --ref HEAD --no-migrate
 ruby deploy.rb 'HEAD'
 
 echo "-----> Checking availability..."
