@@ -25,10 +25,10 @@ ruby deploy.rb 'HEAD'
 # copy env config
 cp .env recipes/cookbooks/env_vars/attributes/.env > /dev/null || true
 
-cd $_DIR_/recipes
+cd recipes
 ey recipes upload -e $EY_ENVIRONMENT
 ey recipes apply -e $EY_ENVIRONMENT
-cd $_DIR_
+cd ..
 
 # FIXME EY bug needs manual puma restart
 
