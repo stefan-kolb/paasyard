@@ -6,7 +6,7 @@ Any system with a running Docker daemon will do!
 
 ## Installation
 1. Clone the repository
-2. Configure a `config/provider.cfg` with your provider credentials (see `config/provider.cfg.example` for aan example file)
+2. Configure a `config/provider.cfg` with your provider credentials (see `config/provider.cfg.example` for an example file)
 3. Build the Docker images and install the `yard` executable via `sudo make install`
 
 ## Usage
