@@ -25,4 +25,4 @@ n = SecureRandom.random_number(nouns.length - 1)
 # combine with random number
 number = SecureRandom.random_number(1000)
 # return name
-puts "#{adjectives[a]}-#{nouns[n]}-#{number}"
+puts "#{adjectives[a]}#{nouns[n]}#{number}"
