@@ -17,8 +17,6 @@ END
 heroku apps:destroy --app $APPNAME --confirm $APPNAME
 
 echo "-----> Cleaning application space..."
-# ssh keys
-heroku keys:remove dploy
 # delete tokens
 heroku auth:logout
 

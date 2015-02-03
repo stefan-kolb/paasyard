@@ -14,17 +14,10 @@ $HEROKU_PASSWORD
 END
 
 # add remote if missing
-heroku git:remote -a $APPNAME --ssh-git
+heroku git:remote -a $APPNAME
 
 # update files
-expect <<'END'
-  set timeout 1000
-  spawn git push heroku master -f
-  expect {
-    -re ".*continue connecting (yes/no)?.*" { send "yes\r"}
-  }
-  expect eof
-END
+git push heroku master -f
 
 echo "-----> Checking availability..."
 is_up "https://$APPNAME.herokuapp.com"
