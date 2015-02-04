@@ -11,9 +11,18 @@ Any system with a running Docker daemon will do!
 
 ## Usage
 1. Define necessary environment variables, e.g. `RAILS_ENV=production` (one per line) inside the app folder in the `.env` file
-2. Run deployment via `yard (create|push|delete) VENDOR [-a APPNAME]`
-
-This will create a new application APPNAME at vendor VENDOR and push the application.
+2. Deploy 
+```sh  
+$ yard create VENDOR [-a APPNAME]
+```
+3. Update
+```sh  
+$ yard push VENDOR [-a APPNAME]
+```
+4. Delete
+```sh  
+$ yard delete VENDOR [-a APPNAME]
+```
 
 ## Field of application
 - Deployment abstraction
