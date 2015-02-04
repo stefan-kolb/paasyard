@@ -10,16 +10,17 @@ Any system with a running Docker daemon will do!
 3. Build the Docker images and install the `yard` executable via `sudo make install`
 
 ## Usage
-1. Define necessary environment variables, e.g. `RAILS_ENV=production` (one per line) inside the app folder in the `.env` file
-2. Deploy 
+Define necessary environment variables, e.g. `RAILS_ENV=production` (one per line) inside the app folder in the `.env` file
+
+### Deploy 
 ```sh  
 $ yard create VENDOR [-a APPNAME]
 ```
-3. Update
+### Update
 ```sh  
 $ yard push VENDOR [-a APPNAME]
 ```
-4. Delete
+### Delete
 ```sh  
 $ yard delete VENDOR [-a APPNAME]
 ```
