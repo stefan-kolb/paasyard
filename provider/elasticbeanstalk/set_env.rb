@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require 'yaml'
 
-file = File.dirname(File.realpath(__FILE__)) << '.env'
+file = File.dirname(File.realpath(__FILE__)) << '/.env'
 
 if File.exists?(file)
   env = Hash[*File.read(file).split(/[= \n]+/)]
@@ -13,4 +13,6 @@ if File.exists?(file)
   end
 
   File.write('.ebextensions/eb.config', yml.to_yaml)
+else
+  abort "Cannot find .env configuration file"
 end
