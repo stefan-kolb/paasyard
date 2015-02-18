@@ -22,7 +22,7 @@ $AM_SECRET
 $APPNAME
 ${APPNAME}-env
 1
-62
+70
 2
 n
 1
