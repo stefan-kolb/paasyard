@@ -31,8 +31,7 @@ $ yard delete VENDOR [-a APPNAME]
 - Isolated deployment measurements
 
 ## TODO
-- Current vendors `bluemix, pivotal, cloudcontrol, heroku, engineyard, openshift, elasticbeanstalk`
-- Beware that it's Ruby focused for some vendors atm.
-- OpenShift, Elastic Beanstalk: only ruby-2.0
+- Supported vendors: `VENDOR=(bluemix, pivotal, cloudcontrol, heroku, engineyard, openshift, elasticbeanstalk)`
+- Beware that it's currently Ruby focused for some vendors (Beanstalk, OpenShift: Ruby 2.0).
 - Only use `create -> push...push -> delete` workflow for safety now, as SSH keys are pushed on create and removed on delete only at the moment.
 
