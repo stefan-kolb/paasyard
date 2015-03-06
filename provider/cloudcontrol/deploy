@@ -16,8 +16,6 @@ expect <<'END'
   }
   expect eof
 END
-# issue #74
-sleep 10
 
 expect <<'END'
   spawn cctrlapp $env(APPNAME) create ruby

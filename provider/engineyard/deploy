@@ -8,7 +8,6 @@ cd $_DIR_
 
 echo "-----> Initializing application space..."
 # Manual creation necessary
-# https://ui.engineyard.com vs OLD https://cloud.engineyard.com
 ey login <<EOF
 $EY_USERNAME
 $EY_PASSWORD
@@ -16,9 +15,7 @@ EOF
 
 echo "-----> Deploying application..."
 # HEAD already deployed after manual creation
-#ey deploy --app=$APPNAME --environment=$EY_ENVIRONMENT --ref 1d44803847674fc7fb060269d633fce8649c0e62 --no-migrate
-#ey web restart --app=$APPNAME --environment=$EY_ENVIRONMEN
-ruby deploy.rb 'HEAD'
+# ruby deploy.rb 'HEAD'
 
 # ENV variables
 # https://github.com/engineyard/ey-cloud-recipes.git
@@ -29,8 +26,6 @@ cd recipes
 ey recipes upload -e $EY_ENVIRONMENT
 ey recipes apply -e $EY_ENVIRONMENT
 cd ..
-
-# FIXME EY bug needs manual puma restart
 
 echo "-----> Checking availability..."
 url=$(ey servers -s -e $EY_ENVIRONMENT | sed -En "s/\s.*$//p")
