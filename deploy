@@ -41,8 +41,7 @@ pre_deploy() {
   git add --all
   git commit -m "Deployment artifacts" || true
   cd ..
-  # TODO all those artifacts are not good if deployment is not Git based
-  # would also be possible to run a cd app inside the scripts from a parent folder?!
+  # FIXME all those artifacts are recognized if deployment is not Git-based
   # deployment scripts
   cp provider/${1,,}/* current 2> /dev/null || true
   # helper scripts
