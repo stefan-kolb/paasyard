@@ -33,6 +33,7 @@ fi
 
 echo "-----> Deploying application..."
 git=$(rhc show-app $APPNAME | sed -En "s/Git URL:(.*)$/\1/p")
+git remote remove openshift || true
 git remote add openshift $git
 expect <<'END'
   set timeout -1

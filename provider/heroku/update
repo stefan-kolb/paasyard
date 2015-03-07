@@ -14,6 +14,7 @@ $HEROKU_PASSWORD
 END
 
 # add remote if missing
+git remote remove heroku || true
 heroku git:remote -a $APPNAME
 
 # update files

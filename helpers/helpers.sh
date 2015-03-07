@@ -21,6 +21,7 @@ is_up() {
 
   if [ $timeout -eq 0 ]; then
     printf "$url is DOWN!\n"
+    exit 1
   else
     printf "$url is UP!\n"
   fi

@@ -14,6 +14,7 @@ $HEROKU_PASSWORD
 END
 
 # create app space
+git remote remove heroku || true
 heroku create $APPNAME
 
 # set env vars

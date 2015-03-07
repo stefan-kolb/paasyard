@@ -8,6 +8,7 @@ cd $_DIR_
 
 echo "-----> Updating application..."
 git=$(rhc show-app $APPNAME -l $OS_USERNAME -p $OS_PASSWORD | sed -En "s/Git URL:(.*)$/\1/p")
+git remote remove openshift || true
 git remote add openshift $git
 expect <<'END'
   set timeout -1
