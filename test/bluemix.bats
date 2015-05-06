@@ -8,13 +8,13 @@ setup() {
 }
 
 teardown() {
-  yard delete bluemix -a "$APP_NAME"
+  paasyard delete bluemix -a "$APP_NAME"
   cleanup
 }
 
 @test "default ruby version" {
   git clone https://github.com/sharpstone/default_ruby.git .
-  run yard create bluemix
+  run paasyard create bluemix
   echo "$output"
   [ "$status" -eq 0 ]
 }

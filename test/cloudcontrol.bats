@@ -8,13 +8,13 @@ setup() {
 }
 
 teardown() {
-  yard delete cloudcontrol -a "$APP_NAME"
+  paasyard delete cloudcontrol -a "$APP_NAME"
   cleanup
 }
 
 @test "default ruby" {
   git clone https://github.com/sharpstone/default_ruby.git .
-  run yard create cloudcontrol
+  run paasyard create cloudcontrol
   echo "$output"
   [ "$status" -eq 0 ]
 }

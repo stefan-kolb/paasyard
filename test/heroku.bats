@@ -8,13 +8,13 @@ setup() {
 }
 
 teardown() {
-  yard delete heroku -a "$APP_NAME"
+  paasyard delete heroku -a "$APP_NAME"
   cleanup
 }
 
 @test "default ruby version" {
   git clone https://github.com/sharpstone/default_ruby.git .
-  run yard create heroku
+  run paasyard create heroku
   echo "$output"
   [ "$status" -eq 0 ]
 }
