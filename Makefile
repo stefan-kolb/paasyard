@@ -7,8 +7,8 @@ build:
 
 install: build
 	# install executable
-	chmod +x yard
-	cp yard /usr/bin/
+	chmod +x paasyard
+	cp yard /usr/local/bin/
 	@echo
 	@echo "Your PaaSyard is ready. Let's get to work!"
 

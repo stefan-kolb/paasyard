@@ -7,22 +7,22 @@ Any system with a running Docker daemon will do!
 ## Installation
 1. Clone the repository
 2. Configure a `config/provider.cfg` with your provider credentials (see `config/provider.cfg.example` for an example file)
-3. Build the Docker images and install the `yard` executable via `sudo make install`
+3. Build the Docker images and install the `paasyard` executable via `sudo make install`
 
 ## Usage
 Define necessary environment variables, e.g. `RAILS_ENV=production` (one per line) inside the app folder in the `.env` file
 
 ### Deploy 
 ```sh  
-$ yard create VENDOR [-a APPNAME]
+$ paasyard create VENDOR [-a APPNAME]
 ```
 ### Update
 ```sh  
-$ yard push VENDOR [-a APPNAME]
+$ paasyard push VENDOR [-a APPNAME]
 ```
 ### Delete
 ```sh  
-$ yard delete VENDOR [-a APPNAME]
+$ paasyard delete VENDOR [-a APPNAME]
 ```
 
 ## Field of application

@@ -41,7 +41,7 @@ contains() {
 }
 
 usage() {
-  echo "Usage: yard COMMAND VENDOR [OPTIONS]"
+  echo "Usage: paasyard COMMAND VENDOR [OPTIONS]"
   echo ""
   echo "COMMANDS:"
   echo "  create    # deploy application to vendor"
