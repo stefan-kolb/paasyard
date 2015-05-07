@@ -5,9 +5,9 @@ readonly YARD_VERSION="0.2"
 readonly NAME="stfnklb/yard"
 TAG="${PWD##*/}"
 
-# TODO list and check if vendor is supported
+# TODO check if vendor is supported
 # TODO supply an option to deploy to all at once
-readonly vendors=(heroku openshift cloudcontrol elasticbeanstalk engineyard pivotal bluemix)
+readonly vendors=(bluemix cloudcontrol elasticbeanstalk engineyard heroku openshift pivotal)
 
 clean() {
   # terminated containers
@@ -48,6 +48,7 @@ usage() {
   echo "  push      # update to a new version"
   echo "  delete    # delete application"
   echo "  set-env   # set an env variable"
+  echo "  list      # list available vendors"
   echo "  clean     # clean up docker images"
   echo ""
   echo "OPTIONS:"
@@ -70,6 +71,12 @@ main() {
   if [[ "$cmd" == "clean" ]]; then
     echo "Removing app images..."
     docker images | grep -P 'stfnklb/yard\s*?(?!.*base)' | awk '{print $3}' | xargs docker rmi &> /dev/null || true
+    exit 0
+  fi
+
+  # list vendors
+  if [[ "$cmd" == "list" ]]; then
+    printf '  %s\n' "${vendors[@]}"
     exit 0
   fi
 

@@ -6,11 +6,34 @@ Any system with a running Docker daemon will do!
 
 ## Installation
 1. Clone the repository
+```sh  
+$ git clone https://github.com/stefan-kolb/paasyard.git
+``` 
 2. Configure a `config/provider.cfg` with your provider credentials (see `config/provider.cfg.example` for an example file)
-3. Build the Docker images and install the `paasyard` executable via `sudo make install`
+3. Build the Docker images and install the `paasyard` executable 
+```sh  
+$ sudo make install
+```
 
 ## Usage
-Define necessary environment variables, e.g. `RAILS_ENV=production` (one per line) inside the app folder in the `.env` file
+Supported vendors: 
+```sh  
+$ paasyard list
+bluemix
+cloudcontrol
+elasticbeanstalk
+engineyard
+heroku
+openshift
+pivotal
+```
+
+Define necessary environment variables inside the app folder in a `.env` file (one per line)
+```sh  
+$ cat .env
+RAILS_ENV=production
+MONGO_URL=mongodb://user:pass@example.com:59938
+```
 
 ### Deploy 
 ```sh  
@@ -29,9 +52,14 @@ $ paasyard delete VENDOR [-a APPNAME]
 - Deployment abstraction
 - Quick deployment tests
 - Isolated deployment measurements
+```sh  
+$ time paasyard create heroku
+real	6m22.759s
+user	0m0.049s
+sys	0m0.055s
+``` 
 
 ## TODO
-- Supported vendors: `VENDOR=(bluemix, pivotal, cloudcontrol, heroku, engineyard, openshift, elasticbeanstalk)`
 - Beware that it's currently Ruby focused for some vendors (Beanstalk, OpenShift: Ruby 2.0).
 - Only use `create -> push...push -> delete` workflow for safety now, as SSH keys are pushed on create and removed on delete only at the moment.
 
