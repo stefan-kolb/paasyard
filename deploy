@@ -11,10 +11,9 @@ while read -r line; do
 done < config/provider.cfg
 
 # create deployment
-# expect app inside app/
+# expect app inside /app
 # vendor deployment into /temp
 # copy necessary files from vendor pack
-# this is basically on demand what the init.sh script does in v1
 pre_deploy() {
   echo "-----> Preparing app for ${1^} deployment..."
   # defensiv clean up

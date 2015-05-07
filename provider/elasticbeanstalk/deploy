@@ -7,19 +7,40 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Initializing application space..."
-. eb_init.sh
+# configure app
+ruby set_appname.rb
+
+# region (default: us-east)
+# appname
+# runtime detection
+# runtime version
+# ssh access
+expect <<'END'
+  set timeout -1
+  spawn eb init
+  expect {
+    -re ".*default region.*" { send "1\r"; exp_continue } 
+    -re ".*application to use.*" { send "\r"; exp_continue }
+    -re ".*Application Name.*" { send "$env(APPNAME)\r"; exp_continue }
+    -re ".*appears you are using.*" { send "y\r"; exp_continue }
+    -re ".*platform version.*" { send "3\r"; exp_continue }
+    -re ".*SSH for your instances.*" { send "n\r" }
+  }
+  expect eof
+END
 
 echo "-----> Deploying application..."
-eb start --verbose <<EOF
-y
-EOF
+eb create $APPNAME-env --verbose
 
-# WORKAROUND --polling-timeout 1800 is bugged
-# see https://forums.aws.amazon.com/message.jspa?messageID=562409#562409
+# set env vars
+if [[ !${#evar[@]} -eq 0 ]]; then
+  eb setenv ${evar[@]}
+fi
+
 # wait for instance to be ready
 printf "Waiting for instance to be ready again"
 
-until [ "$(eb status | sed -En "s/Status.*?: (.*)$/\1/p")" == "Ready" ]; do
+until [[ "$(eb status | sed -En "s/Status: (.*)$/\1/p")" =~ "Ready" ]]; do
   printf "."
   sleep 1
 done
@@ -27,6 +48,6 @@ done
 printf "\n"
 
 echo "-----> Checking availability..."
-url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
+url=$(eb status | sed -En "s/CNAME.*?: (.*)$/\1/p")
 is_up $url
 

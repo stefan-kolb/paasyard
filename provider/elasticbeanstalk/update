@@ -7,16 +7,26 @@ cd $_DIR_
 . helpers.sh
 
 echo "-----> Updating application..."
-# rerun eb init for config file
-. eb_init.sh
+# reconfigure app
+ruby set_appname.rb
+
+# region (default: us-east)
+expect <<'END'
+  set timeout -1
+  spawn eb init
+  expect {
+    -re ".*default region.*" { send "1\r" }
+  }
+  expect eof
+END
 
 # deploy
-eb push
+eb deploy $APPNAME-env
 
 # wait for instance to be ready
 printf "Waiting for instance to be ready again"
 
-until [ "$(eb status | sed -En "s/Status.*?: (.*)$/\1/p")" == "Ready" ]; do
+until [[ "$(eb status | sed -En "s/Status: (.*)$/\1/p")" =~ "Ready" ]]; do
   printf "."
   sleep 1
 done
@@ -24,6 +34,6 @@ done
 printf "\n"
 
 echo "-----> Checking availability..."
-url=$(eb status | sed -En "s/URL.*?: (.*)$/\1/p")
+url=$(eb status | sed -En "s/CNAME.*?: (.*)$/\1/p")
 is_up $url
 
