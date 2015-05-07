@@ -5,18 +5,18 @@ Docker powered (mini) deployment system for PaaS.
 Any system with a running Docker daemon will do!
 
 ## Installation
-- Clone the repository
+Clone the repository:
 ```sh  
 $ git clone https://github.com/stefan-kolb/paasyard.git
 ``` 
-- Configure a `config/provider.cfg` with your provider credentials (see `config/provider.cfg.example` for an example file)
+Configure a `config/provider.cfg` with your provider credentials (see `config/provider.cfg.example`).
 ```sh  
 $ cat mv provider.cfg.example provider.cfg
 # Heroku
 HEROKU_USERNAME=
 HEROKU_PASSWORD=
 ``` 
-- Build the Docker images and install the `paasyard` executable 
+Build the Docker images and install the `paasyard` executable:
 ```sh  
 $ sudo make install
 ```
@@ -34,7 +34,7 @@ openshift
 pivotal
 ```
 
-Define necessary environment variables inside the app folder in a `.env` file (one per line)
+Define necessary environment variables inside the app folder in a `.env` file (one per line).
 ```sh  
 $ cat .env
 RAILS_ENV=production
