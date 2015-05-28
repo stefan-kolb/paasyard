@@ -29,6 +29,7 @@ RUN echo 'gem: --no-document' >> ~/.gemrc
 RUN apt-get update &&\
     apt-get install -y python2.7 python-pip python-dev &&\
     pip install --upgrade pip
+ENV PIP_USE_MIRRORS true
 
 ## Files
 ADD . /yard
