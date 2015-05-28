@@ -27,6 +27,7 @@ Supported vendors:
 $ paasyard list
 bluemix
 cloudcontrol
+dotcloud
 elasticbeanstalk
 engineyard
 heroku
@@ -66,6 +67,6 @@ sys	0m0.055s
 ``` 
 
 ## TODO
-- Beware that it's currently Ruby focused for some vendors (Beanstalk, OpenShift: Ruby 2.0).
+- Beware that it's currently Ruby focused for some vendors (cloudControl, dotCloud, Beanstalk, OpenShift: Ruby 2.0).
 - Only use `create -> push...push -> delete` workflow for safety now, as SSH keys are pushed on create and removed on delete only at the moment.
 

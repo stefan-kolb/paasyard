@@ -1,0 +1,49 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Initializing application space..."
+# ssh keys
+expect <<'END'
+  spawn dcuser key.add
+  expect {
+    -re "Email.*" { send "$env(DC_USERNAME)\r"; exp_continue } 
+    -re ".*Password.*" { send "$env(DC_PASSWORD)\r" }
+  }
+END
+
+expect <<'END'
+  spawn dcapp $env(APPNAME) create ruby
+  expect {
+    -re ".*Git configuration found! Using "Git" as repository type..*" { exit 0 }    
+    -re ".*name: App with this Name already exists..*" { exit 1 }
+  }
+END
+
+if [[ !${#evar[@]} -eq 0 ]]; then
+  dcapp $APPNAME/default config.add ${evar[@]}
+fi
+
+echo "-----> Deploying application..."
+expect <<'END'
+  set timeout 1000
+  spawn dcapp $env(APPNAME)/default push
+  expect {
+    -re ".*continue connecting (yes/no)?" { send "yes\r"}
+  }
+  expect eof
+END
+
+# --memory 512MB
+dcapp $APPNAME/default deploy
+
+# deletes token
+dcuser logout
+
+echo "-----> Checking availability..."
+is_up "https://$APPNAME.dotcloudapp.com"
+

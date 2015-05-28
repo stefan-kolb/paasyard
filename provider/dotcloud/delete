@@ -1,0 +1,38 @@
+#!/bin/bash
+set -eo pipefail
+
+_DIR_="$(dirname "$0")"
+cd $_DIR_
+
+. helpers.sh
+
+echo "-----> Removing application..."
+expect <<'END'
+  set timeout 1000
+  spawn dcapp $env(APPNAME)/default undeploy --force
+  expect {
+    -re "Email.*" { send "$env(DC_USERNAME)\r"; exp_continue } 
+    -re ".*Password.*" { send "$env(DC_PASSWORD)\r" }
+  }
+END
+
+dcapp $APPNAME delete --force
+
+echo "-----> Cleaning application space..."
+# ssh keys
+keys="$(cctrluser key)"
+readarray -t keys <<<"$keys"
+# remove 1st element 'Keys'
+keys=("${keys[@]:1}")
+
+for k in "${keys[@]}"; do
+  echo "Removing key $k..."
+  dcuser key.remove $k -f
+done
+
+# deletes token
+dcuser logout
+
+echo "-----> Checking availability..."
+is_down "https://$APPNAME.dotcloudapp.com"
+

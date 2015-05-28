@@ -7,7 +7,7 @@ TAG="${PWD##*/}"
 
 # TODO check if vendor is supported
 # TODO supply an option to deploy to all at once
-readonly vendors=(bluemix cloudcontrol elasticbeanstalk engineyard heroku openshift pivotal)
+readonly vendors=(bluemix cloudcontrol dotcloud elasticbeanstalk engineyard heroku openshift pivotal)
 
 clean() {
   # terminated containers
